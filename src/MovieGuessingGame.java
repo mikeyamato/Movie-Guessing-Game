@@ -5,12 +5,18 @@ import java.util.Arrays;
 
 public class MovieGuessingGame {
     public static void main (String [] args) throws Exception {
+
+        // clears screen (moves it up)
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        System.out.println("Movie title guessing game. Guess using any letter between A and Z.");
+        System.out.println("You have 10 tries. Good luck!");
+
+
         // computer randomly picks a movie title.
         File file = new File("movies.txt");
         Scanner scanner = new Scanner(file);
-//        String randomMovie = scanner.
         int numOfMovies = 0;
-        int lineNum = 0;
         // initialize 10 points
         int wrongGuess = 0;
 
@@ -20,50 +26,32 @@ public class MovieGuessingGame {
             String movieTitle = scanner.nextLine();  // needed in order to advance to the next line
             movieOptions.add(movieTitle);
         }
-//        System.out.println(movieOptions);
-        System.out.println(numOfMovies);
+//        System.out.println(numOfMovies);
 
         int randomNum = (int)(Math.random() * numOfMovies);
         String chosenMovie = movieOptions.get(randomNum);
 
-        System.out.println("your random index value is " + randomNum);
-        System.out.println("your random movie is " + chosenMovie);
-        char [] charArray = chosenMovie.toCharArray();
-        String charStr = Arrays.toString(charArray);
-        System.out.println(charStr);
+//        System.out.println("your random index value is " + randomNum);
+//        System.out.println("your random movie is: " + chosenMovie);
 
         String chosenMovieForLoop = chosenMovie;
-//        String [] chosenMovieArr = chosenMovie.split("");
-//        System.out.println("WTF: " + chosenMovieArr.length);
 
-
-
-        chosenMovie = chosenMovie.replaceAll("[A-Za-z0-9]", "_");
-        System.out.println("your random movie is " + chosenMovie);
-
-
-
-
-        System.out.println("Guess a letter");
+        // show how many letters it's made up of.
+        chosenMovie = chosenMovie.replaceAll("[A-Za-z]", "_");
+        System.out.println("Guess this movie: " + chosenMovie);
 
         ArrayList<String> incorrectGuessedArr = new ArrayList<String>();
         ArrayList<String> allGuessedArr = new ArrayList<String>();
         StringBuilder guessedTitle = new StringBuilder(chosenMovie);
         while(wrongGuess < 10) {
 
-
+            // winner winner chicken dinner
             if(guessedTitle.indexOf("_") == -1){
-                System.out.println("Congrats!");
+                System.out.println("Congrats! You guessed correctly.");
                 break;
             }
 
-
             System.out.println("Incorrect guesses: " + wrongGuess);
-
-            // dash out movie title and compare with letters in `allGuessedArr`
-//            for(){
-//
-//            }
 
             // keep track of incorrect letters
             StringBuilder incorrectGuessedStr = new StringBuilder();
@@ -85,49 +73,72 @@ public class MovieGuessingGame {
                     allGuessedStr.append(", " + allGuessedArr.get(i));
                 }
             }
-            System.out.println("All guesses: " + allGuessedStr.toString());
+//            System.out.println("All guesses: " + allGuessedStr.toString());
+
+            System.out.println("Guess a letter below!");
+
 
             Scanner inputLetter = new Scanner(System.in);
             String userGuess = inputLetter.nextLine();
+            userGuess = userGuess.toLowerCase();
             allGuessedArr.add(userGuess);
 
             String temp = userGuess;
-            for (int i = 0; i<chosenMovieForLoop.length();i++){
+
+            if (userGuess.matches("[^A-Za-z]")){
+
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("Guess a character from A-Z. Try again.");
+                System.out.println("Guess this movie: " + guessedTitle);
+                continue;
+            }
+
+            try {
+                for (int i = 0; i < chosenMovieForLoop.length(); i++) {
 //                System.out.println("userGuess: " + userGuess);
 //                System.out.println("chosenMovieArr[i]: " + chosenMovieForLoop.charAt(i));
 
-                if(userGuess.charAt(0) == chosenMovieForLoop.charAt(i)) {
+                    if (userGuess.charAt(0) == chosenMovieForLoop.charAt(i)) {
 //                    System.out.println("We got a match!");
 //                    System.out.println("userGuess: " + userGuess);
 //                    System.out.println("chosenMovieArr[i]: " + chosenMovieForLoop.charAt(i));
-                    temp = null;
-//                    chosenMovie = chosenMovie.replace(chosenMovie.charAt(i), userGuess.charAt(0));
+                        temp = null;
 //                    System.out.println("word " + chosenMovieForLoop.charAt(i));
 //                    System.out.println("underline " + chosenMovie.charAt(i));
 //                    System.out.println("replaced with " + userGuess.charAt(0));
-                    guessedTitle.setCharAt(i, userGuess.charAt(0));
-                    System.out.println(guessedTitle);
 
-
+                        // if a letter is indeed in the title the computer will reveal its correct position in the word
+                        guessedTitle.setCharAt(i, userGuess.charAt(0));
+                    }
                 }
+                // clears screen (moves it up)
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
 
-            }
-            if (temp != null){
-                incorrectGuessedArr.add(userGuess);  // pushes to array
-                wrongGuess++;
-            }
+                System.out.println("Guess this movie: " + guessedTitle);
 
+                if (incorrectGuessedArr.contains(userGuess)) {
+                    System.out.println("*** You already tried this character. Try again. ***");
+                    continue;
+                } else if (temp != null) {
+                    incorrectGuessedArr.add(userGuess);  // pushes to array
+                    wrongGuess++;
+                }
+            } catch (Exception exception){
+                // clears screen (moves it up)
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+
+                System.out.println("*** Hmmm...something doesn't look right. Try again. ***");
+                System.out.println("Guess this movie: " + guessedTitle);
+            }
         }
+        // game over
         if (wrongGuess == 10){
             System.out.println("You lost. Try again.");
-
+            System.out.println("The movie was \"" + chosenMovieForLoop + "\".");
         }
-
-        // show how many letters it's made up of.
-        // if a letter is indeed in the title the computer will reveal its correct position in the word, if not, you lose a point. If you lose 10 points, game over!
-
-
-
     }
 }
 
