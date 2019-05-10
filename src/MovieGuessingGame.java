@@ -48,8 +48,15 @@ public class MovieGuessingGame {
 
         ArrayList<String> incorrectGuessedArr = new ArrayList<String>();
         ArrayList<String> allGuessedArr = new ArrayList<String>();
-
+        StringBuilder guessedTitle = new StringBuilder(chosenMovie);
         while(wrongGuess < 10) {
+
+
+            if(guessedTitle.indexOf("_") == -1){
+                System.out.println("Congrats!");
+                break;
+            }
+
 
             System.out.println("Incorrect guesses: " + wrongGuess);
 
@@ -94,6 +101,14 @@ public class MovieGuessingGame {
 //                    System.out.println("userGuess: " + userGuess);
 //                    System.out.println("chosenMovieArr[i]: " + chosenMovieForLoop.charAt(i));
                     temp = null;
+//                    chosenMovie = chosenMovie.replace(chosenMovie.charAt(i), userGuess.charAt(0));
+//                    System.out.println("word " + chosenMovieForLoop.charAt(i));
+//                    System.out.println("underline " + chosenMovie.charAt(i));
+//                    System.out.println("replaced with " + userGuess.charAt(0));
+                    guessedTitle.setCharAt(i, userGuess.charAt(0));
+                    System.out.println(guessedTitle);
+
+
                 }
 
             }
@@ -101,6 +116,10 @@ public class MovieGuessingGame {
                 incorrectGuessedArr.add(userGuess);  // pushes to array
                 wrongGuess++;
             }
+
+        }
+        if (wrongGuess == 10){
+            System.out.println("You lost. Try again.");
 
         }
 
